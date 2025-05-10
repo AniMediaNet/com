@@ -319,7 +319,7 @@ function searchChannels() {
       const video = document.getElementById("post-video").value;
 
       const videoEmbed = video && video.includes("drive.google.com") ? 
-        `<iframe src="https://drive.google.com/file/d/${video.split("/d/")[1].split("/")[5]}/preview" frameborder="0" allowfullscreen></iframe>` 
+        `<iframe src="https://drive.google.com/file/d/${video.split("/")[5]}/preview" frameborder="0" allowfullscreen></iframe>` 
         : '';
 
       if (text || img || video) {
