@@ -189,25 +189,36 @@ function searchChannels() {
     }
 
     function sendPost() {
-      const text = document.getElementById("post-text").value;
-      const img = document.getElementById("post-img").value;
-      const video = document.getElementById("post-video").value;
+  const text = document.getElementById("post-text").value;
+  const img = document.getElementById("post-img").value;
+  const video = document.getElementById("post-video").value;
 
-      const videoEmbed = video && video.includes("drive.google.com") ? 
-        `<iframe src="https://drive.google.com/file/d/${video.split("/d/")[1].split("/")[0]}/preview" frameborder="0" allowfullscreen></iframe>` 
-        : '';
+  let videoEmbed = "";
 
-      if (text || img || video) {
-        db.collection("channels").doc(currentChannel).collection("posts").add({
-          text, img, videoEmbed, created: Date.now()
-        }).then(() => {
-          document.getElementById("post-text").value = "";
-          document.getElementById("post-img").value = "";
-          document.getElementById("post-video").value = "";
-          loadPosts();
-        });
-      }
+  if (video.includes("drive.google.com")) {
+    // Google Drive
+    try {
+      const fileId = video.split("/d/")[1].split("/")[0];
+      videoEmbed = `<iframe src="https://drive.google.com/file/d/${fileId}/preview" frameborder="0" allowfullscreen></iframe>`;
+    } catch (e) {
+      alert("Неверная ссылка на Google Drive");
     }
+  } else if (video.includes("<iframe")) {
+    // Готовый iframe (например, YouTube)
+    videoEmbed = video;
+  }
+
+  if (text || img || videoEmbed) {
+    db.collection("channels").doc(currentChannel).collection("posts").add({
+      text, img, videoEmbed, created: Date.now()
+    }).then(() => {
+      document.getElementById("post-text").value = "";
+      document.getElementById("post-img").value = "";
+      document.getElementById("post-video").value = "";
+      loadPosts();
+    });
+  }
+}
 
     function loadPosts() {
       postList.innerHTML = "";
